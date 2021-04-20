@@ -93,6 +93,13 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(this, &MainWindow::onJobRequest,
 		   Worker, &ThreadWorker::startJob);
 
+	connect(Terminator, &QPushButton::clicked,
+		   Terminator, &QPushButton::hide);
+
+	connect(Terminator, &QPushButton::clicked,
+		   Worker, &ThreadWorker::calcelJob,
+		   Qt::DirectConnection);
+
 	dataPathsChanged();
 }
 

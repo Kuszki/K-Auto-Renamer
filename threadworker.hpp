@@ -29,8 +29,8 @@ class ThreadWorker : public QObject
 
 		mutable QMutex Mutex;
 
-		bool Kill = false;
-		bool Job = false;
+		volatile bool Kill = false;
+		volatile bool Job = false;
 
 		PREFS Prefs;
 
@@ -41,6 +41,9 @@ class ThreadWorker : public QObject
 
 		bool isCanceled(void) const;
 		bool isStartable(void) const;
+
+		template<class Container>
+		static void sort(Container& c);
 
 	protected:
 
@@ -64,5 +67,14 @@ class ThreadWorker : public QObject
 		void onJobProgress(int);
 
 };
+
+template<class Container>
+void ThreadWorker::sort(Container& c)
+{
+	QCollator collator;
+	collator.setNumericMode(true);
+
+	std::stable_sort(c.begin(), c.end(), collator);
+}
 
 #endif // THREADWORKER_HPP

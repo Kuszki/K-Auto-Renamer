@@ -106,10 +106,10 @@ void ThreadWorker::startJob(const QString& src, const QString& dst)
 
 	for (const auto& year : QDir(src).entryList(dirFilter, Prefs.sort))
 		for (const auto& number : QDir(src + '/' + year).entryList(dirFilter, Prefs.sort))
-	   {
-		  Tasks.append(year + '/' + number);
-		  QDir(dst).mkdir(year);
-	   }
+		{
+			Tasks.append(year + '/' + number);
+			QDir(dst).mkdir(year);
+		}
 
 	emit onJobTitle(tr("Processing directories"));
 	emit onJobStart(0, Tasks.length());
@@ -126,8 +126,8 @@ void ThreadWorker::startJob(const QString& src, const QString& dst)
 		const auto year = meta.value(0);
 		const auto number = meta.value(1);
 
-		const auto files = QDir(src + '/' + dirname).entryList(formatFilter, fileFilter, Prefs.sort);
-		const auto others = QDir(src + '/' + dirname).entryList(QStringList(), otherFilter);
+		auto files = QDir(src + '/' + dirname).entryList(formatFilter, fileFilter, Prefs.sort);
+		auto others = QDir(src + '/' + dirname).entryList(QStringList(), otherFilter);
 
 		if (!QDir(dst).mkpath(dirname))
 		{
@@ -148,6 +148,8 @@ void ThreadWorker::startJob(const QString& src, const QString& dst)
 		}
 		else
 		{
+			if (Prefs.sort == QDir::LocaleAware) ThreadWorker::sort(files);
+
 			Stream << number << ' ' << year << ' ' << files.length() << Prefs.endl;
 
 			int page(0); for (const auto& file : files)
